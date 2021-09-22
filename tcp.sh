@@ -185,33 +185,12 @@ net.ipv4.ip_forward = 1">>/etc/sysctl.conf
 		reboot
 	fi
 }
-#更新脚本
-Update_Shell(){
-	echo -e "当前版本为 [ ${sh_ver} ]，开始检测最新版本..."
-	sh_new_ver=$(wget --no-check-certificate -qO- "http://${github}/tcp.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
-	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 检测最新版本失败 !" && start_menu
-	if [[ ${sh_new_ver} != ${sh_ver} ]]; then
-		echo -e "发现新版本[ ${sh_new_ver} ]，是否更新？[Y/n]"
-		read -p "(默认: y):" yn
-		[[ -z "${yn}" ]] && yn="y"
-		if [[ ${yn} == [Yy] ]]; then
-			wget -N --no-check-certificate http://${github}/tcp.sh && chmod +x tcp.sh
-			echo -e "脚本已更新为最新版本[ ${sh_new_ver} ] !"
-		else
-			echo && echo "	已取消..." && echo
-		fi
-	else
-		echo -e "当前已是最新版本[ ${sh_new_ver} ] !"
-		sleep 5s
-	fi
-}
 
 #开始菜单
 start_menu(){
 clear
 echo && echo -e " TCP加速 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   
- ${Green_font_prefix}0.${Font_color_suffix} 升级脚本
 ————————————内核管理————————————
  ${Green_font_prefix}1.${Font_color_suffix} 安装 BBRplus版内核 
 ————————————加速管理————————————
@@ -231,11 +210,8 @@ echo && echo -e " TCP加速 一键安装管理脚本 ${Red_font_prefix}[v${sh_ve
 		
 	fi
 echo
-read -p " 请输入数字 [0-6]:" num
+read -p " 请输入数字 [1-6]:" num
 case "$num" in
-	0)
-	Update_Shell
-	;;
 	1)
 	check_sys_bbrplus
 	;;
@@ -256,7 +232,7 @@ case "$num" in
 	;;
 	*)
 	clear
-	echo -e "${Error}:请输入正确数字 [0-6]"
+	echo -e "${Error}:请输入正确数字 [1-6]"
 	sleep 5s
 	start_menu
 	;;
